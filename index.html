@@ -2,7 +2,8 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>TONY16 DASHBOARD - BYPASS 403</title>
+    <meta name="referrer" content="no-referrer">
+    <title>DASHBOARD TONY16</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.11/shaka-player.ui.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.11/controls.min.css">
     <style>
@@ -13,7 +14,7 @@
         .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 10px; cursor: pointer; text-align: center; }
         .card:hover { border-color: #58a6ff; }
         .card img { max-height: 50px; margin-bottom: 8px; }
-        .group-title { width: 100%; max-width: 1000px; color: #f1e05a; font-weight: bold; margin: 20px 0 10px; border-left: 4px solid #58a6ff; padding-left: 10px; }
+        .group-title { width: 100%; max-width: 1000px; color: #f1e05a; font-weight: bold; margin: 25px 0 10px; border-left: 4px solid #58a6ff; padding-left: 10px; }
     </style>
 </head>
 <body>
@@ -35,16 +36,14 @@ async function init() {
 
     player.configure({ manifest: { dash: { ignoreDrmInfo: true } } });
 
-    // IL KILLER DEL 403: Rimuove l'impronta di GitHub
     player.getNetworkingEngine().registerRequestFilter((type, request) => {
+        // Tentiamo di forzare l'anonimato per i polacchi
         if (request.uris[0].includes('pluscdn.pl')) {
-            // Questo dice al browser di non inviare Origin e Referer se possibile
             request.allowCrossOrigin = true;
-            
-            // Proviamo a sovrascrivere gli header che causano il 403
-            request.headers['Origin'] = 'null'; 
-            request.headers['Referer'] = '';
-            request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
+            // Questi header vengono spesso ignorati dal browser per sicurezza, 
+            // ma con il meta tag sopra abbiamo una chance in più
+            delete request.headers['Origin'];
+            delete request.headers['Referer'];
         }
     });
 
@@ -81,7 +80,7 @@ async function init() {
                 card.onclick = async () => {
                     await player.unload();
                     player.configure({ drm: { clearKeys: currentCh.drm } });
-                    // Forza HTTPS per evitare blocchi misti, dato che dal tuo screen vedo che Chrome lo sta già facendo
+                    // I polacchi caricano solo in HTTPS se siamo su GitHub, forziamolo
                     await player.load(url.replace('http://', 'https://'));
                 };
                 grid.appendChild(card);
