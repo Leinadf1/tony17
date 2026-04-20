@@ -121,7 +121,6 @@
     <div id="main-list" style="width: 100%; display: flex; flex-direction: column; align-items: center;"></div>
 
 <script>
-// URL locale del file m3u nello stesso repository
 const SOURCE_URL = "lista.m3u";
 
 async function init() {
@@ -131,7 +130,10 @@ async function init() {
     const mainList = document.getElementById('main-list');
     const countHeader = document.getElementById('chan-count');
 
-    player.configure({ streaming: { jumpLargeGaps: true } });
+    player.configure({ 
+        streaming: { jumpLargeGaps: true },
+        manifest: { dash: { ignoreDrmInfo: true } } // Necessario per forzare ClearKey su alcuni flussi Vodafone
+    });
 
     function getCategoryGrid(groupName) {
         const name = (groupName || "ALTRI").toUpperCase().trim();
@@ -162,10 +164,17 @@ async function init() {
             card.classList.add('active');
             try {
                 await player.unload();
-                player.configure({ drm: { clearKeys: (ch.drm && Object.keys(ch.drm).length > 0) ? ch.drm : {} } });
+                
+                // Configurazione DRM dinamica per supportare JSON e KID:KEY
+                if (ch.drm && Object.keys(ch.drm).length > 0) {
+                    player.configure({ drm: { clearKeys: ch.drm } });
+                } else {
+                    player.configure({ drm: { clearKeys: {} } });
+                }
+
                 await player.load(ch.url);
                 window.scrollTo({top: 0, behavior: 'smooth'});
-            } catch(e) { console.error("Errore Shaka:", e.code); }
+            } catch(e) { console.error("Errore Shaka:", e.code, e); }
         };
         grid.appendChild(card);
     }
@@ -184,11 +193,17 @@ async function init() {
 
             if (line.startsWith('#KODIPROP:inputstream.adaptive.license_key=')) {
                 const keyData = line.split('=')[1];
-                if (keyData.startsWith('{')) {
+                if (keyData.includes('{')) {
+                    // Formato JSON
                     try { currentChannel.drm = JSON.parse(keyData); } catch(e) {}
-                } else {
+                } else if (keyData.includes(':')) {
+                    // Formato KID:KEY (Portogallo/Polonia)
                     const parts = keyData.split(':');
-                    if (parts.length === 2) currentChannel.drm[parts[0].toLowerCase()] = parts[1].toLowerCase();
+                    if (parts.length === 2) {
+                        const kid = parts[0].toLowerCase().trim();
+                        const key = parts[1].toLowerCase().trim();
+                        currentChannel.drm[kid] = key;
+                    }
                 }
             } 
             else if (line.startsWith('#EXTINF:')) {
@@ -196,9 +211,9 @@ async function init() {
                 const groupMatch = line.match(/group-title="([^"]+)"/i);
                 const nameMatch = line.match(/,(.*)/);
                 
-                if (logoMatch) currentChannel.logo = logoMatch[1];
-                if (groupMatch) currentChannel.group = groupMatch[1];
-                if (nameMatch) currentChannel.name = nameMatch[1].trim();
+                currentChannel.logo = logoMatch ? logoMatch[1] : "";
+                currentChannel.group = groupMatch ? groupMatch[1] : "ALTRI";
+                currentChannel.name = nameMatch ? nameMatch[1].trim() : "Unknown";
             } 
             else if (line.startsWith('http')) {
                 currentChannel.url = line;
