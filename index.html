@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.11/controls.min.css">
     <style>
         body { background: #0d1117; color: white; font-family: sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .player-container { width: 100%; max-width: 800px; background: #000; border-radius: 8px; overflow: hidden; border: 1px solid #30363d; }
+        /* Rimosso bordo grigio, arrotondamento e overflow */
+        .player-container { width: 100%; max-width: 800px; background: #000; }
         video { width: 100%; aspect-ratio: 16/9; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; width: 100%; max-width: 1000px; margin-top: 20px;}
         .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 10px; cursor: pointer; text-align: center; }
@@ -54,7 +55,6 @@ async function init() {
             line = line.trim();
             
             if (line.includes('license_key=')) {
-                // MODIFICA: Supporto per più chiavi e formato JSON
                 if (line.includes('{')) {
                     try {
                         const jsonPart = line.split('license_key=')[1];
@@ -63,7 +63,6 @@ async function init() {
                 } else {
                     const m = line.match(/[a-f0-9]{32}/gi);
                     if (m && m.length >= 2) {
-                        // Cicla su tutte le coppie trovate nella riga
                         for (let i = 0; i < m.length; i += 2) {
                             if (m[i+1]) ch.drm[m[i]] = m[i+1];
                         }
@@ -90,7 +89,6 @@ async function init() {
                 card.innerHTML = `<img src="${currentCh.logo}"><div>${currentCh.name}</div>`;
                 card.onclick = async () => {
                     await player.unload();
-                    // Carica tutte le chiavi estratte
                     player.configure({ drm: { clearKeys: currentCh.drm } });
                     await player.load(url.replace('http://', 'https://'));
                 };
