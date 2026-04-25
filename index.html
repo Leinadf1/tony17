@@ -136,7 +136,7 @@
 
     <div id="header">
         <h1>DASHBOARD TV</h1>
-        <div id="chan-count">0 CANALI</div>
+        <div id="chan-count">CARICAMENTO...</div>
     </div>
 
     <div class="player-container" data-shaka-player-container>
@@ -146,7 +146,7 @@
     <div id="main-list" style="width: 100%;"></div>
 
 <script>
-// Usiamo il link RAW per saltare l'errore grafico di GitHub
+// Link RAW al tuo repository tony16
 const SOURCE = "https://raw.githubusercontent.com/Leinadf1/tony16/main/lista.m3u";
 
 async function init() {
@@ -167,12 +167,20 @@ async function init() {
     });
 
     try {
-        // Aggiungiamo il timestamp per evitare che GitHub ti mandi una pagina di errore in cache
-        const res = await fetch(SOURCE + "?t=" + Date.now());
+        // Fetch con bypass della cache per forzare il caricamento dei dati reali
+        const res = await fetch(SOURCE + "?nocache=" + Date.now());
         const text = await res.text();
+        
+        // Verifica se GitHub sta restituendo una pagina di errore HTML invece del file m3u
+        if (text.trim().startsWith('<!DOCTYPE html>')) {
+            throw new Error("GitHub Error Page");
+        }
+
         const lines = text.split('\n');
         let ch = { drm: {} };
         let count = 0;
+
+        mainList.innerHTML = ""; // Pulisce la lista prima di popolare
 
         for (let line of lines) {
             line = line.trim();
@@ -208,7 +216,7 @@ async function init() {
                 const card = document.createElement('div');
                 card.className = 'channel-card';
                 card.innerHTML = `
-                    <div class="logo-box"><img src="${currentCh.logo}" onerror="this.src='https://via.placeholder.com/150x80/21262d/8b949e?text=LOGO'"></div>
+                    <div class="logo-box"><img src="${currentCh.logo}" onerror="this.src='https://via.placeholder.com/150x80/21262d/8b949e?text=TV'"></div>
                     <div class="info-box"><div class="name">${currentCh.name}</div></div>
                 `;
                 
@@ -223,8 +231,10 @@ async function init() {
             }
         }
         chanCount.innerText = count + " CANALI";
+
     } catch(e) {
-        console.error("Errore nel caricamento della lista:", e);
+        console.error("Errore caricamento lista:", e);
+        chanCount.innerText = "ERRORE LISTA (CONTROLLA REPO)";
     }
 }
 document.addEventListener('shaka-ui-loaded', init);
