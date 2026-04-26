@@ -1,4 +1,17 @@
 #EXTM3U
+
+#EXTINF:-1 group-title="PORTOGALLO" tvg-logo="https://i.ibb.co.com/sggNDR7/a1.png"",Arena Sport 1
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key={"9002ec8c3dbc55c5bccdcd6871d80fd0":"7099325123bae7810db508727bb0bc7d","c43c83acda60593d8e3607efd5010d7d":"526f4a760ef52ab85056fbc10ea27584","712090aae2065c21951b170bc3002330":"a97774e4175b80205c3cf104e9574208"}
+https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/arena1_n/default/index.mpd
+
+#EXTINF:-1 group-title="PORTOGALLO" tvg-logo="https://i.ibb.co.com/R4yyyng/a2.png",Arena Sport 2
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key={"d256b403efcc5c3db701fc696885e102":"d46e4215e279b224e9d2a772db9c74a1","b2f22f5d7ca35910a73fbabc524954de":"d87d08fbe6505ad7099b8c258f396d15","c5e5ac1b3cc15fe790f1bc96535fe329":"3defe59c38079ccad25a436200ad3bd7"}
+https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/arena2/default/index.mpd
+
 #EXTINF:-1 group-title="PORTOGALLO" tvg-logo="https://3038.images-vfp2.ott.kaltura.com/Service.svc/GetImage/p/3038/entry_id/e3a7169255414c35b01973e333e762e5/version/0",Sport TV 1
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
 #KODIPROP:inputstream.adaptive.license_type=clearkey
