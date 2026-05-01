@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>TV DASHBOARD PRO</title>
+    <title>KICK TV</title>
+    
+    <!-- FAVICON -->
+    <link rel="icon" type="image/jpeg" href="https://i.ibb.co/L7Y0C8b/kick-streaming.jpg">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.11/shaka-player.ui.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.11/controls.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -25,7 +29,7 @@
         .channel-card.active { border: 2px solid #58a6ff; background-color: #21262d; }
         .logo-box { width: 100%; height: 100px; display: flex; justify-content: center; align-items: center; background: #0d1117; padding: 15px; box-sizing: border-box; }
         .logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .info-box { padding: 12px; text-align: center; border-top: 1px solid #30363d; background: #161b22; flex-grow: 1; display: flex; align-items: center; justify-content: center; }
+        .info-box { padding: 12px; text-align: center; border-top: 1px solid #30363d; background: #161222; flex-grow: 1; display: flex; align-items: center; justify-content: center; }
         .name { font-size: 13.5px; font-weight: 600; color: #f0f6fc; text-transform: uppercase; line-height: 1.3; }
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
@@ -38,7 +42,7 @@
 <body>
 
     <div id="header">
-        <h1>DASHBOARD TV</h1>
+        <h1>KICK TV</h1>
         <div id="chan-count">0 CANALI</div>
     </div>
 
@@ -58,7 +62,6 @@ async function init() {
     const mainList = document.getElementById('main-list');
     const chanCount = document.getElementById('chan-count');
 
-    // Configurazione ottimizzata per gestire i salti di gap e i redirect
     player.configure({ 
         manifest: { dash: { ignoreDrmInfo: true } }, 
         streaming: { 
@@ -68,10 +71,8 @@ async function init() {
     });
 
     player.getNetworkingEngine().registerRequestFilter((type, request) => {
-        // Applichiamo il filtro per i canali polacchi (Eleven/T-Mobile)
         if (request.uris[0].includes('pluscdn.pl') || request.uris[0].includes('t-mobile.pl')) {
             request.allowCrossOrigin = true;
-            // Spacciamoci per una Smart TV per evitare blocchi browser standard
             request.headers['User-Agent'] = 'Mozilla/5.0 (Web0S; Linux/SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.199 Safari/537.36';
             delete request.headers['Origin'];
             delete request.headers['Referer'];
@@ -128,7 +129,6 @@ async function init() {
                     card.classList.add('active');
                     await player.unload();
                     
-                    // Applica le chiavi DRM specifiche del canale
                     player.configure({ drm: { clearKeys: currentCh.drm } });
                     
                     try {
