@@ -6,7 +6,7 @@
     <meta name="referrer" content="no-referrer">
     <title>KICK TV</title>
 
-    <!-- ICONE (immagine originale, con parametro anti-cache) -->
+    <!-- ICONE (immagine originale) -->
     <link rel="icon" type="image/png" sizes="512x512" href="https://leinadf1.github.io/kicktv/image.png?v=2">
     <link rel="apple-touch-icon" sizes="180x180" href="https://leinadf1.github.io/kicktv/image.png?v=2">
     <link rel="icon" type="image/png" href="https://leinadf1.github.io/kicktv/image.png?v=2">
@@ -73,7 +73,7 @@
         body { 
             background-color: #000000; 
             color: #f0f6fc; 
-            font-family: 'Inter', "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0; 
             padding: 20px; 
             display: flex; 
@@ -142,11 +142,6 @@
             letter-spacing: 1px; 
             display: flex; 
             align-items: center; 
-            /* Font con supporto emoji */
-            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Emoji One", sans-serif;
-            font-variant-emoji: emoji;
-            -webkit-font-variant-emoji: emoji;
-            text-rendering: optimizeLegibility;
         }
 
         .category-title::before { 
@@ -157,6 +152,14 @@
             background: #05ff12; 
             margin-right: 12px; 
             border-radius: 2px; 
+        }
+
+        /* Stile per l'immagine bandiera */
+        .flag-img {
+            height: 24px;
+            width: auto;
+            margin-right: 8px;
+            vertical-align: middle;
         }
 
         .grid { 
@@ -265,44 +268,49 @@ document.getElementById('splash-screen').addEventListener('click', function() {
 
 const SOURCE_API = "lista.m3u";
 
-/* Icona di fallback per i canali (visibile sempre, anche offline) */
+/* Icona di fallback per i canali */
 const FALLBACK_ICON = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 80" fill="none">
   <rect width="150" height="80" fill="#161b22"/>
   <text x="75" y="45" dominant-baseline="middle" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="14" fill="#f0f6fc">TV</text>
 </svg>`);
 
-// Mappa dei codici paese a bandiere emoji
+// Mappa dei codici paese (estesa)
 const countryFlagMap = {
-    "PT": "🇵🇹",
-    "BA": "🇧🇦",
-    "IT": "🇮🇹",
-    "UK": "🇬🇧",
-    "US": "🇺🇸",
-    "ES": "🇪🇸",
-    "FR": "🇫🇷",
-    "DE": "🇩🇪",
-    "NL": "🇳🇱",
-    "BR": "🇧🇷",
-    "AR": "🇦🇷",
-    "RO": "🇷🇴",
-    "GR": "🇬🇷"
-    // Aggiungi altri codici qui
+    "PT": "pt",   // Portogallo
+    "BA": "ba",   // Bosnia ed Erzegovina
+    "IT": "it",   // Italia
+    "UK": "gb",   // Regno Unito (GB per la bandiera)
+    "US": "us",   // Stati Uniti
+    "ES": "es",   // Spagna
+    "FR": "fr",   // Francia
+    "DE": "de",   // Germania
+    "NL": "nl",   // Paesi Bassi
+    "BR": "br",   // Brasile
+    "AR": "ar",   // Argentina
+    "RO": "ro",   // Romania
+    "GR": "gr",   // Grecia
+    "MX": "mx",   // Messico
+    "PL": "pl"    // Polonia
 };
 
-// Sostituisce il codice paese all'inizio del gruppo con la bandiera
-function replaceCountryWithEmoji(groupTitle) {
-    const words = groupTitle.trim().split(' ');
-    const firstWord = words[0].toUpperCase();
-    if (countryFlagMap[firstWord]) {
-        words[0] = countryFlagMap[firstWord];
-        return words.join(' ');
-    }
-    // Controlla se c'è uno spazio dopo il codice (es. "PT PORTOGALLO")
-    const match = groupTitle.match(/^([A-Z]{2})\s/);
+// Restituisce il codice paese (minuscolo) se il gruppo inizia con un codice conosciuto
+function extractCountryCode(groupTitle) {
+    const match = groupTitle.trim().match(/^([A-Z]{2})\b/);
     if (match && countryFlagMap[match[1]]) {
-        return groupTitle.replace(match[1], countryFlagMap[match[1]]);
+        return match[1];
     }
-    return groupTitle;
+    return null;
+}
+
+// Sostituisce il codice paese con l'immagine bandiera
+function replaceCountryWithFlagImg(groupTitle) {
+    const code = extractCountryCode(groupTitle);
+    if (!code) return groupTitle;
+    const countryCode = countryFlagMap[code];
+    const flagUrl = `https://flagcdn.com/24x18/${countryCode}.png`;
+    const imgHtml = `<img src="${flagUrl}" alt="${code}" class="flag-img" />`;
+    // Rimuove il codice iniziale e lo spazio successivo
+    return imgHtml + groupTitle.replace(/^[A-Z]{2}\s*/, '');
 }
 
 async function init() {
@@ -352,8 +360,8 @@ async function init() {
                 const currentCh = {...ch};
                 count++;
 
-                // Trasforma il nome del gruppo con la bandiera emoji
-                const groupWithFlag = replaceCountryWithEmoji(currentCh.group);
+                // Genera titolo categoria con bandiera immagine
+                const groupHtml = replaceCountryWithFlagImg(currentCh.group);
 
                 let gridId = `grid-${currentCh.group.replace(/[^\w]/g, '-').toLowerCase()}`;
                 let grid = document.getElementById(gridId);
@@ -361,8 +369,7 @@ async function init() {
                 if (!grid) {
                     const container = document.createElement('div');
                     container.className = 'category-container';
-                    // Usiamo groupWithFlag invece di currentCh.group
-                    container.innerHTML = `<div class="category-title">${groupWithFlag}</div><div class="grid" id="${gridId}"></div>`;
+                    container.innerHTML = `<div class="category-title">${groupHtml}</div><div class="grid" id="${gridId}"></div>`;
                     mainList.appendChild(container);
                     grid = document.getElementById(gridId);
                 }
