@@ -92,7 +92,7 @@
         .name { font-size: 13.5px; font-weight: 600; color: #f0f6fc; text-transform: uppercase; line-height: 1.3; }
         .flag-img { height: 28px; width: auto; margin-right: 10px; vertical-align: middle; border-radius: 3px; }
 
-        /* === MEDIA QUERY MOBILE === */
+        /* MEDIA QUERY MOBILE */
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
             .logo-box { height: 80px; padding: 10px; }
@@ -122,9 +122,34 @@
     <div id="main-list" style="width: 100%;"></div>
 
 <script type="module">
-// === GESTIONE AUTENTICAZIONE CON TOKEN (singola sessione) ===
-let currentToken = null;
+// === GESTIONE PASSWORD (semplicato, come nel progetto funzionante) ===
+let currentPassword = null;
 let heartbeatInterval;
+
+function startHeartbeat(password) {
+    if (heartbeatInterval) clearInterval(heartbeatInterval);
+    heartbeatInterval = setInterval(async () => {
+        try {
+            const resp = await fetch("/api/get-list", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-heartbeat': 'true'
+                },
+                body: JSON.stringify({ password: password })
+            });
+            if (!resp.ok) {
+                const err = await resp.json().catch(() => ({ error: 'Sessione scaduta' }));
+                alert(err.error || 'Un altro dispositivo ha effettuato l\'accesso.');
+                window.location.reload();
+            }
+        } catch (e) {
+            console.warn("Heartbeat fallito");
+            alert("Connessione persa. Ricarica la pagina.");
+            window.location.reload();
+        }
+    }, 15000);
+}
 
 async function checkAccess() {
     const psw = prompt("Password:");
@@ -139,47 +164,21 @@ async function checkAccess() {
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            alert(errorData.error || "Password errata!");
+            alert(errorData.error || "Password errata o sessione già attiva!");
             window.location.reload();
             return;
         }
 
-        const data = await response.json();
-        currentToken = data.token;
-        
+        const m3uData = await response.text();
+        currentPassword = psw;
         document.getElementById('mainBody').style.display = "flex";
-        startHeartbeat(currentToken);
-        init(data.m3u);
+        
+        startHeartbeat(psw);
+        init(m3uData);
 
     } catch (error) {
         alert("Errore server. Riprova.");
     }
-}
-
-function startHeartbeat(token) {
-    if (heartbeatInterval) clearInterval(heartbeatInterval);
-    heartbeatInterval = setInterval(async () => {
-        try {
-            const resp = await fetch("/api/get-list", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-heartbeat': 'true',
-                    'x-token': token
-                },
-                body: JSON.stringify({ password: '' }) // non serve per heartbeat
-            });
-            if (!resp.ok) {
-                const err = await resp.json().catch(() => ({ error: 'Sessione terminata' }));
-                alert(err.error || 'Un altro dispositivo ha effettuato l\'accesso. Sessione terminata.');
-                window.location.reload();
-            }
-        } catch (e) {
-            console.warn("Heartbeat fallito");
-            alert("Connessione persa. Ricarica la pagina.");
-            window.location.reload();
-        }
-    }, 15000); // ogni 15 secondi
 }
 
 // === INIZIALIZZAZIONE PLAYER E CANALI (con bandiere, DRM, etc.) ===
@@ -299,12 +298,11 @@ async function init(m3uContent) {
     }
     chanCount.innerText = count + " CANALI";
 
-    // Rimuove lo splash screen dopo il caricamento dei canali
+    // Rimuovi lo splash screen dopo il caricamento
     const splash = document.getElementById('splash-screen');
     splash.classList.add('fade-out');
 }
 
-// Avvia la richiesta password quando il player Shaka è pronto
 document.addEventListener('shaka-ui-loaded', checkAccess);
 </script>
 </body>
