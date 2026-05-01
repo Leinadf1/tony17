@@ -154,7 +154,7 @@
             border-radius: 2px; 
         }
 
-        /* Stile per l'immagine bandiera */
+        /* Stile per l'immagine bandiera (SVG inline) */
         .flag-img {
             height: 24px;
             width: auto;
@@ -274,41 +274,46 @@ const FALLBACK_ICON = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="ht
   <text x="75" y="45" dominant-baseline="middle" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="14" fill="#f0f6fc">TV</text>
 </svg>`);
 
-// Mappa dei codici paese (estesa)
-const countryFlagMap = {
-    "PT": "pt",   // Portogallo
-    "BA": "ba",   // Bosnia ed Erzegovina
-    "IT": "it",   // Italia
-    "UK": "gb",   // Regno Unito (GB per la bandiera)
-    "US": "us",   // Stati Uniti
-    "ES": "es",   // Spagna
-    "FR": "fr",   // Francia
-    "DE": "de",   // Germania
-    "NL": "nl",   // Paesi Bassi
-    "BR": "br",   // Brasile
-    "AR": "ar",   // Argentina
-    "RO": "ro",   // Romania
-    "GR": "gr",   // Grecia
-    "MX": "mx",   // Messico
-    "PL": "pl"    // Polonia
+// ========== BANDIERE COME SVG INLINE (data-URI) ==========
+// Aggiungi altri paesi copiando l'SVG e cambiando il codice
+const flagSVGs = {
+    "pt": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23060' d='M0 0h213v480H0z'/%3E%3Cpath fill='%23F00' d='M213 0h427v480H213z'/%3E%3Ccircle cx='213' cy='240' r='106.7' fill='%23FF0' stroke='%23000' stroke-width='2'/%3E%3Ccircle cx='213' cy='240' r='53.3' fill='%23060'/%3E%3C/svg%3E",
+    "ba": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23000' d='M0 0h640v480H0z'/%3E%3Cpath fill='%23FFF' d='M0 0h640v320H0z'/%3E%3Cpath fill='%2300F' d='M0 0h640v160H0z'/%3E%3C/svg%3E",
+    "it": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23009246' d='M0 0h213v480H0z'/%3E%3Cpath fill='%23FFF' d='M213 0h214v480H213z'/%3E%3Cpath fill='%23CE2B37' d='M427 0h213v480H427z'/%3E%3C/svg%3E",
+    "gb": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23012169' d='M0 0h640v480H0z'/%3E%3Cpath stroke='%23FFF' stroke-width='18' d='M0 0l640 480M640 0L0 480'/%3E%3Cpath stroke='%23C8102E' stroke-width='12' d='M0 0l640 480M640 0L0 480'/%3E%3C/svg%3E",
+    "us": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23FFF' d='M0 0h640v480H0z'/%3E%3Cpath fill='%23B22234' d='M0 0h640v37H0zm0 74h640v37H0zm0 74h640v37H0zm0 74h640v37H0zm0 74h640v37H0zm0 74h640v37H0zm0 74h640v37H0z'/%3E%3Cpath fill='%233C3B6E' d='M0 0h256v259H0z'/%3E%3C/svg%3E",
+    "es": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23AA151B' d='M0 0h640v480H0z'/%3E%3Cpath fill='%23F1BF00' d='M0 120h640v240H0z'/%3E%3C/svg%3E",
+    "fr": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%230055A4' d='M0 0h213v480H0z'/%3E%3Cpath fill='%23FFF' d='M213 0h214v480H213z'/%3E%3Cpath fill='%23EF4135' d='M427 0h213v480H427z'/%3E%3C/svg%3E",
+    "de": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23000000' d='M0 0h640v160H0z'/%3E%3Cpath fill='%23DD0000' d='M0 160h640v160H0z'/%3E%3Cpath fill='%23FFCE00' d='M0 320h640v160H0z'/%3E%3C/svg%3E",
+    "nl": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23AE1C28' d='M0 0h640v160H0z'/%3E%3Cpath fill='%23FFF' d='M0 160h640v160H0z'/%3E%3Cpath fill='%2321468B' d='M0 320h640v160H0z'/%3E%3C/svg%3E",
+    "br": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23009B3A' d='M0 0h640v480H0z'/%3E%3Cpath fill='%23FEDF00' d='M320 240L640 480H0z'/%3E%3Ccircle cx='320' cy='240' r='106.7' fill='%23000'/%3E%3C/svg%3E",
+    "ar": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%233D8A4A' d='M0 0h640v160H0z'/%3E%3Cpath fill='%23FFF' d='M0 160h640v160H0z'/%3E%3Cpath fill='%230074B8' d='M0 320h640v160H0z'/%3E%3C/svg%3E",
+    "ro": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23002492' d='M0 0h640v480H0z'/%3E%3Cpath fill='%23FFC600' d='M0 0h640v320H0z'/%3E%3Cpath fill='%23CE1126' d='M0 0h640v160H0z'/%3E%3C/svg%3E",
+    "gr": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%230D5EAF' d='M0 0h640v107H0z'/%3E%3Cpath fill='%23FFF' d='M0 107h640v107H0zm0 213h640v107H0z'/%3E%3Cpath fill='%230D5EAF' d='M0 426h640v53H0z'/%3E%3C/svg%3E",
+    "mx": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23006242' d='M0 0h640v480H0z'/%3E%3Cpath fill='%23FFF' d='M0 0h640v320H0z'/%3E%3Cpath fill='%23CE1126' d='M0 0h640v160H0z'/%3E%3C/svg%3E",
+    "pl": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480'%3E%3Cpath fill='%23FFF' d='M0 0h640v240H0z'/%3E%3Cpath fill='%23DC143C' d='M0 240h640v240H0z'/%3E%3C/svg%3E"
 };
 
-// Restituisce il codice paese (minuscolo) se il gruppo inizia con un codice conosciuto
+// Mappa codice paese → codice SVG (minuscolo)
+const countryCodeMap = {
+    "PT": "pt", "BA": "ba", "IT": "it", "UK": "gb", "US": "us",
+    "ES": "es", "FR": "fr", "DE": "de", "NL": "nl", "BR": "br",
+    "AR": "ar", "RO": "ro", "GR": "gr", "MX": "mx", "PL": "pl"
+};
+
+// Estrae codice di due lettere all'inizio
 function extractCountryCode(groupTitle) {
     const match = groupTitle.trim().match(/^([A-Z]{2})\b/);
-    if (match && countryFlagMap[match[1]]) {
-        return match[1];
-    }
-    return null;
+    return match ? match[1] : null;
 }
 
-// Sostituisce il codice paese con l'immagine bandiera
+// Sostituisce il codice paese con l'immagine della bandiera SVG
 function replaceCountryWithFlagImg(groupTitle) {
     const code = extractCountryCode(groupTitle);
-    if (!code) return groupTitle;
-    const countryCode = countryFlagMap[code];
-    const flagUrl = `https://flagcdn.com/24x18/${countryCode}.png`;
-    const imgHtml = `<img src="${flagUrl}" alt="${code}" class="flag-img" />`;
+    if (!code || !countryCodeMap[code]) return groupTitle;
+    const svgData = flagSVGs[countryCodeMap[code]];
+    if (!svgData) return groupTitle;
+    const imgHtml = `<img src="${svgData}" alt="${code}" class="flag-img" />`;
     // Rimuove il codice iniziale e lo spazio successivo
     return imgHtml + groupTitle.replace(/^[A-Z]{2}\s*/, '');
 }
@@ -360,7 +365,7 @@ async function init() {
                 const currentCh = {...ch};
                 count++;
 
-                // Genera titolo categoria con bandiera immagine
+                // Genera titolo categoria con bandiera SVG
                 const groupHtml = replaceCountryWithFlagImg(currentCh.group);
 
                 let gridId = `grid-${currentCh.group.replace(/[^\w]/g, '-').toLowerCase()}`;
