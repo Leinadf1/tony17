@@ -3,56 +3,49 @@ import fs from 'fs';
 import path from 'path';
 
 export default async function handler(req, res) {
-    // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-heartbeat');
-
     if (req.method === 'OPTIONS') return res.status(200).end();
 
-    // Crea il client KV usando le variabili d’ambiente automatiche di Vercel
     const kv = createClient({
         url: process.env.KV_REST_API_URL,
         token: process.env.KV_REST_API_TOKEN,
     });
 
-    // Legge il corpo della richiesta
     let body = {};
     try {
         const buffers = [];
         for await (const chunk of req) { buffers.push(chunk); }
         const data = Buffer.concat(buffers).toString();
         body = data ? JSON.parse(data) : {};
-    } catch (e) {
-        body = {};
-    }
+    } catch (e) { body = {}; }
 
     const psw = body.password ? body.password.trim() : '';
     const correctPassword = process.env.ACCESS_PASSWORD || '';
 
-    // Verifica password
+    // *** DEBUG: mostra le password nel messaggio di errore ***
     if (!psw || psw !== correctPassword) {
-        return res.status(401).json({ error: 'Password errata' });
+        return res.status(401).json({ 
+            error: `Password errata. Ricevuta: '${psw}' (lunghezza ${psw.length}), Attesa: '${correctPassword}' (lunghezza ${correctPassword.length})`
+        });
     }
+    // FINE DEBUG
 
     const sessionKey = `session_${psw}`;
 
-    // Heartbeat: rinnova sessione (TTL 25 secondi)
     if (req.headers['x-heartbeat'] === 'true') {
         await kv.set(sessionKey, 'active', { ex: 25 });
         return res.status(200).json({ status: 'ok' });
     }
 
-    // Controllo sessione già attiva (impedisce accessi simultanei)
     const isOccupied = await kv.get(sessionKey);
     if (isOccupied) {
         return res.status(403).json({ error: 'Accesso negato: sessione già attiva' });
     }
 
-    // Nuovo accesso: imposta la sessione
     await kv.set(sessionKey, 'active', { ex: 25 });
 
-    // Legge il file lista.m3u dalla root del progetto
     try {
         const filePath = path.join(process.cwd(), 'lista.m3u');
         const m3uContent = fs.readFileSync(filePath, 'utf-8');
