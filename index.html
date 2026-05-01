@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="referrer" content="no-referrer">
-    <title>KICK TV v4</title>
+    <title>KICK TV</title>
 
     <!-- ICONE -->
     <link rel="icon" type="image/png" sizes="512x512" href="https://leinadf1.github.io/kicktv/image.png?v=2">
@@ -69,7 +69,7 @@
             100% { transform: scale(1); filter: drop-shadow(0 0 0px #05ff12); }
         }
 
-        /* === STILI BASE === */
+        /* === STILI PRESI DA tony16.vercel.app (adattati colori KICK) === */
         body { 
             background-color: #000000; 
             color: #f0f6fc; 
@@ -93,8 +93,23 @@
             box-sizing: border-box; 
         }
         
-        h1 { font-size: 22px; font-weight: 700; color: #05ff12; margin: 0; letter-spacing: -0.5px; text-transform: uppercase; }
-        #chan-count { font-size: 13px; color: #05ff12; font-weight: 600; background: #161b22; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(5,255,18,0.3); }
+        h1 { 
+            font-size: 22px; 
+            font-weight: 700; 
+            color: #05ff12; 
+            margin: 0; 
+            letter-spacing: -0.5px; 
+            text-transform: uppercase;
+        }
+        #chan-count { 
+            font-size: 13px; 
+            color: #05ff12; 
+            font-weight: 600; 
+            background: #161b22; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(5,255,18,0.3);
+        }
         
         .player-container { 
             width: 100%; 
@@ -193,8 +208,8 @@
             border-radius: 3px;
         }
 
-        /* MEDIA QUERY MOBILE (breakpoint aumentato a 768px) */
-        @media (max-width: 768px) {
+        /* MEDIA QUERY MOBILE (IDENTICA a tony16.vercel.app) */
+        @media (max-width: 600px) {
             .grid { 
                 grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
                 gap: 12px; 
@@ -204,32 +219,13 @@
             body { padding: 10px; }
         }
     </style>
-
-    <!-- FORZATURA MOBILE IMMEDIATA (backup JS) -->
-    <script>
-    (function forceMobileIfTouch() {
-        if (/Mobi|Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || 
-            (navigator.maxTouchPoints > 0 && 'ontouchstart' in window)) {
-            // Crea un piccolo stile che forza le regole mobile, anche se la media query non scatta
-            var style = document.createElement('style');
-            style.setAttribute('id', 'forced-mobile-style');
-            style.textContent = `
-                body { padding: 10px !important; }
-                .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important; gap: 12px !important; }
-                .logo-box { height: 80px !important; padding: 10px !important; }
-                .name { font-size: 11.5px !important; }
-            `;
-            document.head.appendChild(style);
-        }
-    })();
-    </script>
 </head>
 <body>
 
     <!-- SPLASH SCREEN -->
     <div id="splash-screen">
         <img src="https://leinadf1.github.io/kicktv/image.png" alt="Logo" class="splash-logo">
-        <div class="splash-title">Kick Streaming v4</div>
+        <div class="splash-title">Kick Streaming</div>
         <div class="splash-subtitle">Tutto ciò che è a pagamento è gratis con noi! 🔥</div>
     </div>
 
@@ -243,9 +239,6 @@
     </div>
 
     <div id="main-list" style="width: 100%;"></div>
-
-    <!-- INDICATORE VERSIONE -->
-    <div style="color: #888; font-size: 12px; margin-top: 20px;">Versione 4</div>
 
 <script>
 // === RIMOZIONE SPLASH SCREEN ===
