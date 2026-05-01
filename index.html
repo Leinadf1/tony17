@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* SPLASH SCREEN CSS (invariato) */
+        /* SPLASH SCREEN CSS */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -69,7 +69,7 @@
             100% { transform: scale(1); filter: drop-shadow(0 0 0px #05ff12); }
         }
 
-        /* STILI PRESI DA DASHBOARD PRO (adattati ai colori KICK) */
+        /* STILI BASE (Desktop) */
         body { 
             background-color: #000000; 
             color: #f0f6fc; 
@@ -217,24 +217,24 @@
             border-radius: 3px;
         }
 
-        /* MOBILE: ESATTAMENTE COME DASHBOARD PRO */
-        @media (max-width: 600px) {
+        /* MOBILE: forzato con !important per sovrascrivere qualsiasi cache */
+        @media (max-width: 768px) {
             .grid { 
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
-                gap: 12px; 
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important; 
+                gap: 12px !important; 
             }
             .logo-box { 
-                height: 80px; 
-                padding: 10px; 
+                height: 80px !important; 
+                padding: 10px !important; 
             }
             .name { 
-                font-size: 11.5px; 
+                font-size: 11.5px !important; 
             }
             body { 
-                padding: 10px; 
+                padding: 10px !important; 
             }
             .category-title { 
-                font-size: 16px; 
+                font-size: 16px; /* rimane uguale */ 
             }
         }
     </style>
@@ -282,63 +282,36 @@ const FALLBACK_ICON = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="ht
 
 // Mappa emoji → codice paese (minuscolo) per FlagCDN
 const emojiToCountryCode = {
-    "🇵🇹": "pt",
-    "🇧🇦": "ba",
-    "🇮🇹": "it",
-    "🇬🇧": "gb",
-    "🇺🇸": "us",
-    "🇪🇸": "es",
-    "🇫🇷": "fr",
-    "🇩🇪": "de",
-    "🇳🇱": "nl",
-    "🇧🇷": "br",
-    "🇦🇷": "ar",
-    "🇷🇴": "ro",
-    "🇬🇷": "gr",
-    "🇲🇽": "mx",
-    "🇵🇱": "pl"
+    "🇵🇹": "pt", "🇧🇦": "ba", "🇮🇹": "it", "🇬🇧": "gb", "🇺🇸": "us",
+    "🇪🇸": "es", "🇫🇷": "fr", "🇩🇪": "de", "🇳🇱": "nl", "🇧🇷": "br",
+    "🇦🇷": "ar", "🇷🇴": "ro", "🇬🇷": "gr", "🇲🇽": "mx", "🇵🇱": "pl"
 };
 
-// Mappa codice paese (maiuscolo) → codice per flagcdn
 const countryCodeMap = {
     "PT": "pt", "BA": "ba", "IT": "it", "UK": "gb", "US": "us",
     "ES": "es", "FR": "fr", "DE": "de", "NL": "nl", "BR": "br",
     "AR": "ar", "RO": "ro", "GR": "gr", "MX": "mx", "PL": "pl"
 };
 
-// Rilevamento dispositivo mobile
 function isMobile() {
     return /Mobi|Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || 
            (navigator.maxTouchPoints > 0 && 'ontouchstart' in window);
 }
 
-// Estrae il codice paese (priorità emoji, poi sigla)
 function extractCountryCode(groupTitle) {
-    // Prova emoji
     const emojiMatch = groupTitle.trim().match(/^(\p{Regional_Indicator}{2})/u);
-    if (emojiMatch && emojiToCountryCode[emojiMatch[1]]) {
-        return emojiToCountryCode[emojiMatch[1]];
-    }
-    // Prova sigla di due lettere
+    if (emojiMatch && emojiToCountryCode[emojiMatch[1]]) return emojiToCountryCode[emojiMatch[1]];
     const codeMatch = groupTitle.trim().match(/^([A-Z]{2})\b/);
-    if (codeMatch && countryCodeMap[codeMatch[1]]) {
-        return countryCodeMap[codeMatch[1]];
-    }
+    if (codeMatch && countryCodeMap[codeMatch[1]]) return countryCodeMap[codeMatch[1]];
     return null;
 }
 
-// Sostituisce con bandiera wavy (solo su PC) o lascia invariato (mobile)
 function formatGroupTitle(groupTitle) {
-    if (isMobile()) {
-        // Su mobile lascia l'emoji originale
-        return groupTitle;
-    }
-    // Su PC sostituisci con immagine wavy da flagcdn
+    if (isMobile()) return groupTitle;
     const code = extractCountryCode(groupTitle);
     if (!code) return groupTitle;
     const flagUrl = `https://flagcdn.com/w80/${code}.png`;
     const imgHtml = `<img src="${flagUrl}" alt="${code}" class="flag-img" />`;
-    // Rimuove l'emoji o il codice iniziale con eventuale spazio
     return imgHtml + groupTitle.replace(/^(?:\p{Regional_Indicator}{2}|[A-Z]{2})\s*/u, '');
 }
 
@@ -388,13 +361,9 @@ async function init() {
                 const url = line;
                 const currentCh = {...ch};
                 count++;
-
-                // Formatta il titolo (bandiera wavy su PC, emoji su mobile)
                 const groupHtml = formatGroupTitle(currentCh.group);
-
                 let gridId = `grid-${currentCh.group.replace(/[^\w]/g, '-').toLowerCase()}`;
                 let grid = document.getElementById(gridId);
-                
                 if (!grid) {
                     const container = document.createElement('div');
                     container.className = 'category-container';
@@ -402,14 +371,12 @@ async function init() {
                     mainList.appendChild(container);
                     grid = document.getElementById(gridId);
                 }
-
                 const card = document.createElement('div');
                 card.className = 'channel-card';
                 card.innerHTML = `
                     <div class="logo-box"><img src="${currentCh.logo}" onerror="this.src='${FALLBACK_ICON}'" alt="logo"></div>
                     <div class="info-box"><div class="name">${currentCh.name}</div></div>
                 `;
-                
                 card.onclick = async () => {
                     document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
                     card.classList.add('active');
