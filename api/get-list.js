@@ -1,4 +1,6 @@
 import { createClient } from '@vercel/kv';
+import fs from 'fs';
+import path from 'path';
 
 export default async function handler(req, res) {
     // CORS
@@ -8,13 +10,13 @@ export default async function handler(req, res) {
 
     if (req.method === 'OPTIONS') return res.status(200).end();
 
-    // Crea il client KV utilizzando le variabili iniettate da Vercel
+    // Crea il client KV usando le variabili d’ambiente automatiche di Vercel
     const kv = createClient({
         url: process.env.KV_REST_API_URL,
         token: process.env.KV_REST_API_TOKEN,
     });
 
-    // Leggi il corpo della richiesta
+    // Legge il corpo della richiesta
     let body = {};
     try {
         const buffers = [];
@@ -52,8 +54,6 @@ export default async function handler(req, res) {
 
     // Legge il file lista.m3u dalla root del progetto
     try {
-        const fs = require('fs');
-        const path = require('path');
         const filePath = path.join(process.cwd(), 'lista.m3u');
         const m3uContent = fs.readFileSync(filePath, 'utf-8');
         return res.status(200).send(m3uContent);
