@@ -71,12 +71,6 @@ https://rr.cdn.vodafone.pt/LIVE/sdash/LIVE$524/index.mpd/Manifest.mpd?start=LIVE
 #KODIPROP:inputstream.adaptive.license_key={"d931d671884145dfb392be0cade5088c":"beee3956b769c39f00fa3ce84a2efaba"}
 https://rr.cdn.vodafone.pt/LIVE/sdash/LIVE$525/index.mpd/Manifest.mpd?start=LIVE&end=END&device=DASH_AVC_FULLHD
 
-#EXTINF:-1 group-title="🇨🇭 SVIZZERA" tvg-logo="https://github.com/tv-logo/tv-logos/blob/main/countries/switzerland/rsi-la1-ch.png?raw=true",RSI LA 1 
-https://viamotionhsi.netplus.ch/live/eds/rsila1hd/browser-dash/rsila1hd.mpd
-
-#EXTINF:-1 group-title="🇨🇭 SVIZZERA" tvg-logo="https://github.com/tv-logo/tv-logos/blob/main/countries/switzerland/rsi-la2-ch.png?raw=true",RSI LA 2 
-https://viamotionhsi.netplus.ch/live/eds/rsila2hd/browser-dash/rsila2hd.mpd
-
 #EXTINF:-1 group-title="🇬🇧 GRAN BRETAGNA" tvg-logo="https://img-284.media.info/i/bg/1/1539-1690027797.webp", TNT SPORTS 1
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
 #KODIPROP:inputstream.adaptive.license_type=clearkey
