@@ -71,11 +71,35 @@ https://rr.cdn.vodafone.pt/LIVE/sdash/LIVE$524/index.mpd/Manifest.mpd?start=LIVE
 #KODIPROP:inputstream.adaptive.license_key={"d931d671884145dfb392be0cade5088c":"beee3956b769c39f00fa3ce84a2efaba"}
 https://rr.cdn.vodafone.pt/LIVE/sdash/LIVE$525/index.mpd/Manifest.mpd?start=LIVE&end=END&device=DASH_AVC_FULLHD
 
-#EXTINF:-1 group-title="🇵🇹 PORTOGALLO" tvg-logo="https://static.wikia.nocookie.net/logopedia/images/f/f8/TNT_Sports_1_%282023%29.svg/revision/latest?cb=20230704071741", TNT SPORTS 1
+#EXTINF:-1 group-title="🇨🇭 SVIZZERA" tvg-logo="https://github.com/tv-logo/tv-logos/blob/main/countries/switzerland/rsi-la1-ch.png?raw=true",RSI LA 1 
+https://viamotionhsi.netplus.ch/live/eds/rsila1hd/browser-dash/rsila1hd.mpd
+
+#EXTINF:-1 group-title="🇨🇭 SVIZZERA" tvg-logo="https://github.com/tv-logo/tv-logos/blob/main/countries/switzerland/rsi-la2-ch.png?raw=true",RSI LA 2 
+https://viamotionhsi.netplus.ch/live/eds/rsila2hd/browser-dash/rsila2hd.mpd
+
+#EXTINF:-1 group-title="🇬🇧 INGHILTERRA" tvg-logo="https://img-284.media.info/i/bg/1/1539-1690027797.webp", TNT SPORTS 1
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key={"294b5761cefc22d0c6312939e13d8278":"52148f1042d238849f0a7813f1da8a7b"}
 https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/cllekigzzn/out/v1/bd3b0c314fff4bb1ab4693358f3cd2d3/cenc.mpd
+
+#EXTINF:-1 group-title="🇬🇧 INGHILTERRA" tvg-logo="https://img-284.media.info/i/bg/1/1540-1690027877.webp", TNT SPORTS 2
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key={"f288380ca4cef9ad3f27a92a08e9bb8b":"9f18d26291d9230833501f7f822f6875"}
+https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/fb6jy4pxts/out/v1/f8fa17f087564f51aa4d5c700be43ec4/cenc.mpd
+
+#EXTINF:-1 group-title="🇬🇧 INGHILTERRA" tvg-logo="https://img-284.media.info/i/bg/5/5712-1690027954.webp", TNT SPORTS 3
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key={"1d96ab366bbe6451edf7407b58e2fa16":"0116201f4a63ac5bf5787d2c610c41a7"}
+https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/5sxuux529k/out/v1/bb548a3626cd4708afbb94a58d71dce9/cenc.mpd
+
+#EXTINF:-1 group-title="🇬🇧 INGHILTERRA" tvg-logo="https://img-284.media.info/i/bg/1/1491-1690027975.webp", TNT SPORTS 4
+#KODIPROP:inputstream.adaptive.manifest_type=mpd
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key={"192b1115da041585c77200128549efa1":"634e10efe4abbb14be400a3ccbac0258"}
+https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/pnu10tp36z/out/v1/912e9db56d75403b8a9ac0a719110f36/cenc.mpd
 
 #EXTINF:-1 group-title="🇧🇦 BOSNIA ED HERZEGOVINA" tvg-logo="https://i.ibb.co.com/sggNDR7/a1.png",Arena Sport 1
 #KODIPROP:inputstream.adaptive.manifest_type=mpd
