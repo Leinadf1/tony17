@@ -137,19 +137,14 @@
 function setupSplash() {
     const splash = document.getElementById('splash-screen');
     
-    // Funzione per nascondere lo splash e chiedere la password
     function hideSplashAndAskPassword() {
         if (!splash.classList.contains('fade-out')) {
             splash.classList.add('fade-out');
-            // Aspetta la fine della transizione prima di chiedere la password
             setTimeout(checkAccess, 800);
         }
     }
 
-    // Cliccando sullo splash, lo fa sparire subito
     splash.addEventListener('click', hideSplashAndAskPassword);
-
-    // Dopo 3 secondi, lo splash scompare automaticamente
     setTimeout(hideSplashAndAskPassword, 3000);
 }
 
@@ -206,13 +201,15 @@ const FALLBACK_ICON = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="ht
 const emojiToCountryCode = {
     "🇵🇹": "pt", "🇧🇦": "ba", "🇮🇹": "it", "🇬🇧": "gb", "🇺🇸": "us",
     "🇪🇸": "es", "🇫🇷": "fr", "🇩🇪": "de", "🇳🇱": "nl", "🇧🇷": "br",
-    "🇦🇷": "ar", "🇷🇴": "ro", "🇬🇷": "gr", "🇲🇽": "mx", "🇵🇱": "pl"
+    "🇦🇷": "ar", "🇷🇴": "ro", "🇬🇷": "gr", "🇲🇽": "mx", "🇵🇱": "pl",
+    "🇨🇦": "ca"
 };
 
 const countryCodeMap = {
     "PT": "pt", "BA": "ba", "IT": "it", "UK": "gb", "US": "us",
     "ES": "es", "FR": "fr", "DE": "de", "NL": "nl", "BR": "br",
-    "AR": "ar", "RO": "ro", "GR": "gr", "MX": "mx", "PL": "pl"
+    "AR": "ar", "RO": "ro", "GR": "gr", "MX": "mx", "PL": "pl",
+    "CA": "ca"
 };
 
 function isMobile() {
